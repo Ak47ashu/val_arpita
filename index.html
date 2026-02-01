@@ -21,7 +21,7 @@ body {
 h1, h2, p { color: #e6005c; }
 
 button {
-  padding: 10px 20px;
+  padding: 10px 22px;
   font-size: 18px;
   margin: 15px;
   border: none;
@@ -42,10 +42,29 @@ button {
 
 .hidden { display: none; }
 
+.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 img {
   width: 250px;
   border-radius: 15px;
   margin-top: 15px;
+}
+
+.enough {
+  animation: shake 0.6s ease;
+  font-size: 20px;
+  color: #ff1a75;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
 }
 
 .heart {
@@ -53,7 +72,6 @@ img {
   bottom: -10px;
   font-size: 20px;
   animation: floatUp 6s linear infinite;
-  color: #ff4d79;
 }
 
 @keyframes floatUp {
@@ -65,8 +83,14 @@ img {
 
 <body>
 
+<!-- MUSIC -->
 <audio id="bgMusic" loop>
-  <source src="https://raw.githubusercontent.com/Ak47ashu/val_arpita/main/Tohre%20Me%20Base%20Raja%20Hamro%20Paranwa%20Ho%20-%20Swati%20Mishra_320(BhojpuriPlanet.In).mp3" type="audio/mpeg">
+  <source src="https://raw.githubusercontent.com/Ak47ashu/val_arpita/main/Tohre%20Me%20Base%20Raja%20Hamro%20Paranwa%20Ho%20-%20Swati%20Mishra_320(BhojpuriPlanet.In).mp3">
+</audio>
+
+<!-- CLICK SOUND -->
+<audio id="clickSound">
+  <source src="https://assets.mixkit.co/sfx/preview/mixkit-cartoon-click-1114.mp3">
 </audio>
 
 <div class="box">
@@ -80,7 +104,7 @@ img {
 
 <!-- STEP 2 -->
 <div id="step2" class="hidden">
-  <h1>Give me first vitamin goli 😋</h1>
+  <h1>Give me vitamin goli first 😋</h1>
   <button id="yes2" class="hidden">Yes</button>
   <button id="no2">No</button>
 </div>
@@ -90,17 +114,17 @@ img {
   <h2>You had no choice 😂💖</h2>
   <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"><br>
   <button id="hateBtn">I hate you my bubu 😜</button><br><br>
-  <button id="loveBtn" class="hidden">I Love You ❤️</button>
+  <button id="loveBtn" class="hidden">I Love You bubu ❤️</button>
 </div>
 
-<!-- FINAL LOVE PAGE -->
+<!-- FINAL PAGE -->
 <div id="lovePage" class="hidden">
   <h1>So… officially my Valentine forever? 💍❤️</h1>
   <img src="https://raw.githubusercontent.com/Ak47ashu/val_arpita/main/IMG-20251219-WA0000.jpg">
   <p>
     From the first smile to every silly fight,<br>
     every moment with you is my favorite memory. 💖<br>
-    lvvvvv uhhhhhh meri secret superstar, bulbul ki mausi 💖
+    lvvvvv uhhhhhh meri secret superstar, bulbul ki mausi 💖<br><br>
   </p>
 </div>
 
@@ -108,53 +132,47 @@ img {
 
 <script>
 const music = document.getElementById("bgMusic");
+const clickSound = document.getElementById("clickSound");
 
-// Teasing runaway button with control
-function moveButton(btn, unlockAfter = 3) {
+// FINAL TEASING FUNCTION
+function playfulButton(btn, unlockAfter = 4, onUnlock) {
   const texts = ["No 😜", "Are you sure? 😏", "Think again 😂", "Click Yes ❤️"];
-  let i = 0;
-  let attempts = 0;
+  let clicks = 0;
 
   function move() {
-    const x = Math.random() * (window.innerWidth - 120);
-    const y = Math.random() * (window.innerHeight - 60);
+    const x = Math.random() * (window.innerWidth - 130);
+    const y = Math.random() * (window.innerHeight - 70);
     btn.style.left = x + "px";
     btn.style.top = y + "px";
   }
 
-  btn.addEventListener("mouseover", () => {
-    attempts++;
+  // Hover → move only
+  btn.addEventListener("mouseover", move);
+
+  // Click → count + text + sound
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (clicks >= unlockAfter) return;
+
+    clicks++;
+    clickSound.currentTime = 0;
+    clickSound.play();
+
+    btn.innerText = texts[clicks - 1];
     move();
-    if (attempts >= unlockAfter) {
-      btn.innerText = texts[i % texts.length];
-      i++;
+
+    // After final click
+    if (clicks === unlockAfter) {
+      btn.classList.add("disabled");
+      btn.innerText = "Okay okay… enough 😭";
+      btn.classList.add("enough");
+      onUnlock();
     }
   });
-
-  btn.addEventListener("click", () => {
-    attempts++;
-    move();
-    if (attempts >= unlockAfter) {
-      btn.innerText = texts[i % texts.length];
-      i++;
-    }
-  });
-
-  return () => attempts;
 }
 
-// Apply teasing logic
-const getNoAttempts = moveButton(no, 3);
-const getNo2Attempts = moveButton(no2, 3);
-const getHateAttempts = moveButton(hateBtn, 3);
-
 // STEP 1
-no.onclick = () => {
-  if (getNoAttempts() >= 3) {
-    yes.classList.remove("hidden");
-  }
-};
-
+playfulButton(no, 4, () => yes.classList.remove("hidden"));
 yes.onclick = () => {
   music.play();
   step1.classList.add("hidden");
@@ -162,12 +180,7 @@ yes.onclick = () => {
 };
 
 // STEP 2
-no2.onclick = () => {
-  if (getNo2Attempts() >= 3) {
-    yes2.classList.remove("hidden");
-  }
-};
-
+playfulButton(no2, 4, () => yes2.classList.remove("hidden"));
 yes2.onclick = () => {
   music.play();
   step2.classList.add("hidden");
@@ -175,12 +188,7 @@ yes2.onclick = () => {
 };
 
 // STEP 3
-hateBtn.onclick = () => {
-  if (getHateAttempts() >= 3) {
-    loveBtn.classList.remove("hidden");
-  }
-};
-
+playfulButton(hateBtn, 4, () => loveBtn.classList.remove("hidden"));
 loveBtn.onclick = () => {
   music.play();
   final.classList.add("hidden");
