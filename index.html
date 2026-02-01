@@ -15,8 +15,10 @@ body {
   font-family: Arial, sans-serif;
   overflow: hidden;
 }
+
 .box { text-align: center; }
-h1 { color: #e6005c; }
+
+h1, h2, p { color: #e6005c; }
 
 button {
   padding: 10px 20px;
@@ -53,6 +55,7 @@ img {
   animation: floatUp 6s linear infinite;
   color: #ff4d79;
 }
+
 @keyframes floatUp {
   0% { transform: translateY(0); opacity: 1; }
   100% { transform: translateY(-110vh); opacity: 0; }
@@ -68,36 +71,33 @@ img {
 
 <div class="box">
 
-<!-- Step 1 -->
+<!-- STEP 1 -->
 <div id="step1">
   <h1>Will you be my Valentine, Arpita? ❤️</h1>
-  <button id="yes">Yes</button>
+  <button id="yes" class="hidden">Yes</button>
   <button id="no">No</button>
 </div>
 
-<!-- Step 2 -->
+<!-- STEP 2 -->
 <div id="step2" class="hidden">
   <h1>Give me first vitamin goli 😋</h1>
-  <button id="yes2">Yes</button>
+  <button id="yes2" class="hidden">Yes</button>
   <button id="no2">No</button>
 </div>
 
-<!-- Step 3 -->
+<!-- STEP 3 -->
 <div id="final" class="hidden">
   <h2>You had no choice 😂💖</h2>
   <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"><br>
-
   <button id="hateBtn">I hate you my bubu 😜</button><br><br>
-  <button id="loveBtn">I Love You ❤️</button>
+  <button id="loveBtn" class="hidden">I Love You ❤️</button>
 </div>
 
-<!-- Final Love Page -->
+<!-- FINAL LOVE PAGE -->
 <div id="lovePage" class="hidden">
-  <h1 style="color:#e6005c;">So… officially my Valentine forever? 💍❤️</h1>
-
+  <h1>So… officially my Valentine forever? 💍❤️</h1>
   <img src="https://raw.githubusercontent.com/Ak47ashu/val_arpita/main/IMG-20251219-WA0000.jpg">
-
-  <p style="color:#e6005c; font-size:18px;">
+  <p>
     From the first smile to every silly fight,<br>
     every moment with you is my favorite memory. 💖<br>
     lvvvvv uhhhhhh meri secret superstar, bulbul ki mausi 💖
@@ -109,32 +109,80 @@ img {
 <script>
 const music = document.getElementById("bgMusic");
 
-// Move button
-function moveButton(btn, changeText=false) {
+// Teasing runaway button with control
+function moveButton(btn, unlockAfter = 3) {
+  const texts = ["No 😜", "Are you sure? 😏", "Think again 😂", "Click Yes ❤️"];
+  let i = 0;
+  let attempts = 0;
+
+  function move() {
+    const x = Math.random() * (window.innerWidth - 120);
+    const y = Math.random() * (window.innerHeight - 60);
+    btn.style.left = x + "px";
+    btn.style.top = y + "px";
+  }
+
   btn.addEventListener("mouseover", () => {
-    btn.style.left = Math.random()*90 + "vw";
-    btn.style.top = Math.random()*90 + "vh";
-    if(changeText) btn.innerText = "Click I Love You ❤️";
+    attempts++;
+    move();
+    if (attempts >= unlockAfter) {
+      btn.innerText = texts[i % texts.length];
+      i++;
+    }
   });
+
+  btn.addEventListener("click", () => {
+    attempts++;
+    move();
+    if (attempts >= unlockAfter) {
+      btn.innerText = texts[i % texts.length];
+      i++;
+    }
+  });
+
+  return () => attempts;
 }
 
-moveButton(no);
-moveButton(no2);
-moveButton(hateBtn, true);
+// Apply teasing logic
+const getNoAttempts = moveButton(no, 3);
+const getNo2Attempts = moveButton(no2, 3);
+const getHateAttempts = moveButton(hateBtn, 3);
 
-// Steps
+// STEP 1
+no.onclick = () => {
+  if (getNoAttempts() >= 3) {
+    yes.classList.remove("hidden");
+  }
+};
+
 yes.onclick = () => {
   music.play();
   step1.classList.add("hidden");
   step2.classList.remove("hidden");
 };
 
+// STEP 2
+no2.onclick = () => {
+  if (getNo2Attempts() >= 3) {
+    yes2.classList.remove("hidden");
+  }
+};
+
 yes2.onclick = () => {
+  music.play();
   step2.classList.add("hidden");
   final.classList.remove("hidden");
 };
 
+// STEP 3
+hateBtn.onclick = () => {
+  if (getHateAttempts() >= 3) {
+    loveBtn.classList.remove("hidden");
+  }
+};
+
 loveBtn.onclick = () => {
+  music.play();
   final.classList.add("hidden");
   lovePage.classList.remove("hidden");
 };
