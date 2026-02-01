@@ -15,14 +15,8 @@ body {
   font-family: Arial, sans-serif;
   overflow: hidden;
 }
-
-.box {
-  text-align: center;
-}
-
-h1 {
-  color: #e6005c;
-}
+.box { text-align: center; }
+h1 { color: #e6005c; }
 
 button {
   padding: 10px 20px;
@@ -33,20 +27,18 @@ button {
   cursor: pointer;
 }
 
-#yes, #yes2 {
+#yes, #yes2, #loveBtn {
   background-color: #ff4d79;
   color: white;
 }
 
-#no, #no2 {
+#no, #no2, #hateBtn {
   background-color: #999;
   color: white;
   position: absolute;
 }
 
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
 img {
   width: 250px;
@@ -54,7 +46,6 @@ img {
   margin-top: 15px;
 }
 
-/* Floating hearts */
 .heart {
   position: fixed;
   bottom: -10px;
@@ -62,7 +53,6 @@ img {
   animation: floatUp 6s linear infinite;
   color: #ff4d79;
 }
-
 @keyframes floatUp {
   0% { transform: translateY(0); opacity: 1; }
   100% { transform: translateY(-110vh); opacity: 0; }
@@ -72,9 +62,8 @@ img {
 
 <body>
 
-<!-- 🎵 Background Music -->
-<audio autoplay loop>
-  <source src="YOUR_MUSIC_LINK_HERE" type="audio/mpeg">
+<audio id="bgMusic" loop>
+  <source src="https://raw.githubusercontent.com/Ak47ashu/val_arpita/main/Tohre%20Me%20Base%20Raja%20Hamro%20Paranwa%20Ho%20-%20Swati%20Mishra_320(BhojpuriPlanet.In).mp3" type="audio/mpeg">
 </audio>
 
 <div class="box">
@@ -93,67 +82,62 @@ img {
   <button id="no2">No</button>
 </div>
 
-<!-- Final Section -->
+<!-- Step 3 -->
 <div id="final" class="hidden">
   <h2>You had no choice 😂💖</h2>
+  <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"><br>
 
-  <!-- Your Photo -->
-  <img src="https://github.com/Ak47ashu/val_arpita/blob/main/IMG-20251219-WA0000.jpg" alt="Our Photo">
+  <button id="hateBtn">I hate you my bubu 😜</button><br><br>
+  <button id="loveBtn">I Love You ❤️</button>
+</div>
 
-  <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" alt="Funny Gif">
+<!-- Final Love Page -->
+<div id="lovePage" class="hidden">
+  <h1 style="color:#e6005c;">So… officially my Valentine forever? 💍❤️</h1>
+
+  <img src="https://raw.githubusercontent.com/Ak47ashu/val_arpita/main/IMG-20251219-WA0000.jpg">
 
   <p style="color:#e6005c; font-size:18px;">
     From the first smile to every silly fight,<br>
     every moment with you is my favorite memory. 💖<br>
-    lvvvvv uhhhhhh meri secret superstar, bulbul ki mausi 💖<br>
-    
+    lvvvvv uhhhhhh meri secret superstar, bulbul ki mausi 💖
   </p>
-
-  <h2 style="color:#ff4d79;">So… officially my Valentine forever? 💍❤️</h2>
 </div>
 
 </div>
 
 <script>
-// Elements
-const no1 = document.getElementById("no");
-const no2 = document.getElementById("no2");
-const yes1 = document.getElementById("yes");
-const yes2 = document.getElementById("yes2");
+const music = document.getElementById("bgMusic");
 
-const step1 = document.getElementById("step1");
-const step2 = document.getElementById("step2");
-const final = document.getElementById("final");
-
-// Teasing No button movement
-function moveButton(btn) {
-  const texts = ["No 😜", "Are you sure? 😏", "Think again 😂", "Click Yes ❤️"];
-  let i = 0;
-
+// Move button
+function moveButton(btn, changeText=false) {
   btn.addEventListener("mouseover", () => {
-    const x = Math.random() * (window.innerWidth - 100);
-    const y = Math.random() * (window.innerHeight - 50);
-    btn.style.left = x + "px";
-    btn.style.top = y + "px";
-    btn.innerText = texts[i % texts.length];
-    i++;
+    btn.style.left = Math.random()*90 + "vw";
+    btn.style.top = Math.random()*90 + "vh";
+    if(changeText) btn.innerText = "Click I Love You ❤️";
   });
 }
 
-moveButton(no1);
+moveButton(no);
 moveButton(no2);
+moveButton(hateBtn, true);
 
-// Step transitions
-yes1.addEventListener("click", () => {
+// Steps
+yes.onclick = () => {
+  music.play();
   step1.classList.add("hidden");
   step2.classList.remove("hidden");
-});
+};
 
-yes2.addEventListener("click", () => {
+yes2.onclick = () => {
   step2.classList.add("hidden");
   final.classList.remove("hidden");
-  launchConfetti();
-});
+};
+
+loveBtn.onclick = () => {
+  final.classList.add("hidden");
+  lovePage.classList.remove("hidden");
+};
 
 // Floating hearts
 setInterval(() => {
@@ -164,29 +148,7 @@ setInterval(() => {
   document.body.appendChild(heart);
   setTimeout(() => heart.remove(), 6000);
 }, 500);
-
-// Confetti effect
-function launchConfetti() {
-  for (let i = 0; i < 100; i++) {
-    const conf = document.createElement("div");
-    conf.innerHTML = "🎉";
-    conf.style.position = "fixed";
-    conf.style.left = Math.random() * 100 + "vw";
-    conf.style.top = "-10px";
-    conf.style.fontSize = "20px";
-    document.body.appendChild(conf);
-
-    let drop = setInterval(() => {
-      conf.style.top = parseInt(conf.style.top) + 5 + "px";
-      if (parseInt(conf.style.top) > window.innerHeight) {
-        clearInterval(drop);
-        conf.remove();
-      }
-    }, 30);
-  }
-}
 </script>
 
 </body>
 </html>
-
