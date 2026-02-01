@@ -134,39 +134,60 @@ img {
 const music = document.getElementById("bgMusic");
 const clickSound = document.getElementById("clickSound");
 
+let musicStarted = false;
+
+// ▶️ Play music ONLY ONCE
+function startMusicOnce() {
+  if (!musicStarted) {
+    music.play();
+    musicStarted = true;
+  }
+}
+
 // FINAL TEASING FUNCTION
 function playfulButton(btn, unlockAfter = 4, onUnlock) {
   const texts = ["No 😜", "Are you sure? 😏", "Think again 😂", "Click Yes ❤️"];
   let clicks = 0;
+  let hoverEnabled = false;
+  let isTouch = false;
 
   function move() {
-    const x = Math.random() * (window.innerWidth - 130);
-    const y = Math.random() * (window.innerHeight - 70);
+    const x = Math.random() * (window.innerWidth - 140);
+    const y = Math.random() * (window.innerHeight - 80);
     btn.style.left = x + "px";
     btn.style.top = y + "px";
   }
 
-  // Hover → move only
-  btn.addEventListener("mouseover", move);
+  btn.addEventListener("mouseover", () => {
+    if (!hoverEnabled || isTouch) return;
+    move();
+  });
 
-  // Click → count + text + sound
+  btn.addEventListener("touchstart", () => {
+    isTouch = true;
+  });
+
   btn.addEventListener("click", (e) => {
     e.preventDefault();
     if (clicks >= unlockAfter) return;
 
     clicks++;
+    hoverEnabled = true;
+
     clickSound.currentTime = 0;
     clickSound.play();
 
-    btn.innerText = texts[clicks - 1];
-    move();
+    btn.innerText = texts[Math.min(clicks - 1, texts.length - 1)];
 
-    // After final click
+    setTimeout(move, 120);
+
     if (clicks === unlockAfter) {
-      btn.classList.add("disabled");
-      btn.innerText = "Okay okay… enough 😭";
-      btn.classList.add("enough");
-      onUnlock();
+      setTimeout(() => {
+        btn.classList.add("disabled");
+        btn.innerText = "Okay okay… enough 😭";
+        btn.classList.add("enough");
+        onUnlock();
+      }, 200);
     }
   });
 }
@@ -174,7 +195,7 @@ function playfulButton(btn, unlockAfter = 4, onUnlock) {
 // STEP 1
 playfulButton(no, 4, () => yes.classList.remove("hidden"));
 yes.onclick = () => {
-  music.play();
+  startMusicOnce();
   step1.classList.add("hidden");
   step2.classList.remove("hidden");
 };
@@ -182,7 +203,7 @@ yes.onclick = () => {
 // STEP 2
 playfulButton(no2, 4, () => yes2.classList.remove("hidden"));
 yes2.onclick = () => {
-  music.play();
+  startMusicOnce();
   step2.classList.add("hidden");
   final.classList.remove("hidden");
 };
@@ -190,7 +211,7 @@ yes2.onclick = () => {
 // STEP 3
 playfulButton(hateBtn, 4, () => loveBtn.classList.remove("hidden"));
 loveBtn.onclick = () => {
-  music.play();
+  startMusicOnce();
   final.classList.add("hidden");
   lovePage.classList.remove("hidden");
 };
